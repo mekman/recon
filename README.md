@@ -1,12 +1,5 @@
-.. -*- mode: rst -*-
-
-|Travis|_ |AppVeyor|_
-
-.. |Travis| image:: https://api.travis-ci.org/mekman/recon.svg?branch=master
-.. _Travis: https://travis-ci.org/mekman/recon
-
-.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/github/mekman/recon?branch=master&svg=true
-.. _AppVeyor: https://ci.appveyor.com/project/mekman/recon/history
+[![Build Status](https://travis-ci.org/uwescience/shablona.svg?branch=master)](https://travis-ci.org/uwescience/shablona)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/mekman/recon?branch=master&svg=true)](https://ci.appveyor.com/project/mekman/recon/history)
 
 ## recon
 
