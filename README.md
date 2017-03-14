@@ -4,18 +4,28 @@
 
 ## recon
 
-Recon is a python module for (pRF-based) stimulus reconstruction analyses from
-fMRI data.
+Recon is an open-source python module for (pRF-based) stimulus reconstruction
+analyses from fMRI data.
 
 ### Quick-start
 
-#TODO
+    import matplotlib.pyplot as plt
+    import recon as re
+
+    # load prf properties
+    x0, y0, s0, beta = re.load_example_prf_data()
+
+    # reconstruct stimulus
+    S = re.stimulus_reconstruction(x0, y0, s0, beta, method='summation')
+
+    plt.imshow(S)
+
 
 ### Installation
 
-You can install the recon package with:
+You can install the ``recon`` package with:
 
-    pip install recon #TODO
+    pip install -U recon
 
 
 ### Citing
@@ -23,5 +33,4 @@ You can install the recon package with:
 If you use the project please cite this article:
 
     Ekman, Kok & de Lange (2017). Time-compressed preplay of anticipated events
-    in human primary visual cortex. *Nature Communications*.
-    Ekman, Roelfsema & de Lange (in prep). #TODO
+    in human primary visual cortex. Nature Communications.
