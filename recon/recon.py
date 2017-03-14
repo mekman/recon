@@ -1,4 +1,3 @@
-#from __future__ import absolute_import, division, print_function
 import numpy as np
 from .due import due, Doi
 
@@ -35,16 +34,17 @@ def gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1., amplitude=1.,
 
     Examples
     --------
-    >>> G = gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1., amplitude=1.)
+    >>> G = gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1.,
+        amplitude=1.)
     >>> G.shape
     (32, 32)
     """
 
     if X is None:
         # results in 40,40
-        xv = np.arange(-8, 8, 0.5) # decrease 0.5 for finer resolution
+        xv = np.arange(-8, 8, 0.5)  # decrease 0.5 for finer resolution
         yv = np.arange(-8, 8, 0.5)
-        [X, Y] = np.meshgrid(xv,yv)
+        [X, Y] = np.meshgrid(xv, yv)
         Y = np.flipud(Y)
 
     s_factor2 = 2.*s0**2
