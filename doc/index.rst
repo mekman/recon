@@ -3,7 +3,7 @@
 Welcome to recon's documentation!
 ====================================
 
-`recon` is a python module for the stimulus **recon**struction from neuroimaging
+`recon` is a python module for the stimulus reconstruction from fMRI
 data.
 
 To see how to use it, please refer to the `README file
