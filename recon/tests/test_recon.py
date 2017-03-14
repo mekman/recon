@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import os.path as op
-import numpy as np
+# import numpy as np
 # import pandas as pd
 import numpy.testing as npt
 import recon as sb
@@ -13,4 +13,4 @@ def test_cum_gauss():
                                     amplitude=1.)
 
     # A basic test that the input and output have the same shape:
-    npt.assert_equal(G.shape, (32,32))
+    npt.assert_equal(G.shape, (32, 32))
