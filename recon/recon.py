@@ -13,41 +13,42 @@ due.cite(Doi("10.1167/13.9.30"),
          path='shablona')
 
 
-def gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1., amplitude=1.,
+def gaussian_receptive_field(x0=0., y0=0., s0=1., amplitude=1.,
+                             extent=[-8, 8, -8, 8], resolution=0.5,
                              norm=False):
     """Gaussian 2D receptive field
 
     Parameters
     ----------
-    X :
-    Y :
     x0 : float
-         Center on x-axis (default=0).
+         Center of gaussian in visual degrees (default=0).
     y0 : float
-         Center on y-axis (default=0).
+         Center of gaussian in visual degrees (default=0).
     s0 : float
-         Size in SD (default=1)
+         Size of gaussian in visual degrees (default=1)
     amplitude : float
          Amplitude (default=1.)
+    extent : scalars (left, right, bottom, top), default: [-8, 8, -8, 8]
+         Screen dimensions in visual degrees.
+    resolution : float
+         Interpolation steps in visual degrees (default=0.5).
     norm : bool
-        Normalize gaussian (default=False).
+        Normalize gaussian to unit area under the curve (default=False).
 
     Examples
     --------
-    >>> G = gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1.,
-        amplitude=1.)
+    >>> G = gaussian_receptive_field(x0=1., y0=3., s0=1., amplitude=1.)
     >>> G.shape
     (32, 32)
     """
 
-    if X is None:
-        # results in 40,40
-        xv = np.arange(-8, 8, 0.5)  # decrease 0.5 for finer resolution
-        yv = np.arange(-8, 8, 0.5)
-        [X, Y] = np.meshgrid(xv, yv)
-        Y = np.flipud(Y)
+    xmin, xmax, ymin, ymax = extent
+    xv = np.arange(xmin, xmax, resolution)
+    yv = np.arange(ymin, ymax, resolution)
+    [X, Y] = np.meshgrid(xv, yv)
+    Y = np.flipud(Y)
 
-    s_factor2 = 2.*s0**2
+    s_factor2 = 2. * s0**2
     gauss = amplitude * np.exp(-((X-x0)**2 + (Y-y0)**2)/s_factor2)
 
     if norm:

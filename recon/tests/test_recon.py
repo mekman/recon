@@ -9,8 +9,7 @@ data_path = op.join(re.__path__[0], 'data')
 
 
 def test_cum_gauss():
-    G = re.gaussian_receptive_field(X=None, Y=None, x0=0., y0=0., s0=1.,
-                                    amplitude=1.)
+    G = re.gaussian_receptive_field(x0=1., y0=3., s0=1., amplitude=1.)
 
     # A basic test that the input and output have the same shape:
     npt.assert_equal(G.shape, (32, 32))
