@@ -1,32 +1,32 @@
 [![Build Status](https://travis-ci.org/mekman/recon.svg?branch=master)](https://travis-ci.org/mekman/recon)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/mekman/recon?branch=master&svg=true)](https://ci.appveyor.com/project/mekman/recon/history)
+[![Coverage Status](https://coveralls.io/repos/github/mekman/recon/badge.svg?branch=master)](https://coveralls.io/github/mekman/recon?branch=master)
 [![DOI](https://zenodo.org/badge/84972499.svg)](https://zenodo.org/badge/latestdoi/84972499)
 
 ## recon
 
-Recon is an open-source python module for (pRF-based) stimulus reconstruction
+**Recon** is an open-source python module for (pRF-based) stimulus reconstruction
 analyses from fMRI data.
 
 ### Quick-start
 
-    import matplotlib.pyplot as plt
-    import recon as re
-
-    # load prf properties
-    x0, y0, s0, beta = re.load_example_prf_data()
-
-    # reconstruct stimulus
-    S = re.stimulus_reconstruction(x0, y0, s0, beta, method='summation')
-
-    plt.imshow(S)
-
+```shell
+$ python
+```
+```python
+>>> import matplotlib.pyplot as plt
+>>> import recon as re
+>>> # load prf properties
+>>> x0, y0, s0, beta = re.load_example_prf_data()
+>>> # reconstruct stimulus
+>>> S = re.stimulus_reconstruction(x0, y0, s0, beta, method='summation')
+```
 
 ### Installation
 
 You can install the ``recon`` package with:
 
     pip install -U recon
-
 
 ### Citing
 
