@@ -143,7 +143,7 @@ def select_prf(data, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
 
 
 def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
-                            extent=[-8, 8, -8, 8]):
+                            extent=[-8, 8, -8, 8], resolution = 0.5):
     """prf-based stimulus reconstruction
 
     Parameters
@@ -160,6 +160,8 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
         Reconstruction method to use (default='summation').
     extent : scalars (left, right, bottom, top), default: [-8, 8, -8, 8]
          Screen dimensions in visual degrees.
+    resolution : float
+         Interpolation steps in visual degrees (default=0.5).
 
     Examples
     --------
@@ -176,7 +178,6 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
 
     if method == 'summation':
         xmin, xmax, ymin, ymax = extent
-        resolution = 0.2
         xv = np.arange(xmin, xmax, resolution)
         yv = np.arange(ymin, ymax, resolution)
         [X, Y] = np.meshgrid(xv, yv)
