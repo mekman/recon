@@ -134,7 +134,7 @@ def select_prf(data, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
     idx = np.where(selection == 6)[0]
 
     if verbose:
-        print 'Selected voxel:', len(idx)
+        print('Selected voxel: %s' % len(idx))
 
     x0 = data.x0[idx]
     y0 = data.y0[idx]
