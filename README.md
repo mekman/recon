@@ -6,7 +6,13 @@
 ## recon
 
 **Recon** is an open-source python module for (pRF-based) stimulus reconstruction
-analyses from fMRI data.
+analyses from fMRI data. The main functions include:
+
+- **simple pRF-based reconstruction**/reverse retinotopy with the``summation`` method (Thirion 2006; Kok & de Lange (2014); Ekman et al. (2017))
+- **advanced pRF-based reconstruction** with the ``multivariate`` method (Ekman et al. (in prep))
+- **spatio-temporal reconstruction** (Ekman, Kok & de Lange (2017))
+- tuning-curve **forward model** (Brouwer & Heeger (2009)) - *in future releases*
+
 
 ### Quick-start
 
@@ -17,9 +23,10 @@ $ python
 >>> import matplotlib.pyplot as plt
 >>> import recon as re
 >>> # load prf properties
->>> x0, y0, s0, beta = re.load_example_prf_data()
+>>> x0, y0, s0, r2, betas = re.example_prf_data()
 >>> # reconstruct stimulus
->>> S = re.stimulus_reconstruction(x0, y0, s0, beta, method='summation')
+>>> S = re.stimulus_reconstruction(x0, y0, s0, betas, method='summation')
+>>> plt.imshow(S)
 ```
 
 ### Installation
