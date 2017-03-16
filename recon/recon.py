@@ -143,8 +143,8 @@ def select_prf(data, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
 
 
 def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
-                            extent=[-8, 8, -8, 8], resolution = 0.5):
-    """prf-based stimulus reconstruction
+                            extent=[-8, 8, -8, 8], resolution=0.5, clf=None):
+    """prf-based stimulus reconstruction/inverse retinotopy
 
     Parameters
     ----------
@@ -165,30 +165,55 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
 
     Examples
     --------
-    >>> #TODO
+    >>> x0, y0, s0, r2, betas = re.example_prf_data()
+    >>> S = re.stimulus_reconstruction(x0, y0, s0, betas, method='summation')
     """
-
-    if not method == 'summation':
-        raise NotImplementedError('Only method=summation is supported ATM')
 
     n_voxel = x0.shape[0]
 
     # TODO make sure x0 shape == y0 == s0
     assert len(x0) == len(y0)
 
+    xmin, xmax, ymin, ymax = extent
+    xv = np.arange(xmin, xmax, resolution)
+    yv = np.arange(ymin, ymax, resolution)
+    [X, Y] = np.meshgrid(xv, yv)
+    Y = np.flipud(Y)
+
+    xdim = xv.shape[0]
+    ydim = yv.shape[0]
+
     if method == 'summation':
-        xmin, xmax, ymin, ymax = extent
-        xv = np.arange(xmin, xmax, resolution)
-        yv = np.arange(ymin, ymax, resolution)
-        [X, Y] = np.meshgrid(xv, yv)
-        Y = np.flipud(Y)
-
-        xdim = xv.shape[0]
-        ydim = yv.shape[0]
-
         S = np.zeros((n_voxel, xdim, ydim))
         for i in range(n_voxel):
             S[i] = gaussian_receptive_field(x0[i], y0[i], s0[i], betas[i],
                                             extent, resolution)
 
-        return S.mean(0).reshape(xdim, ydim)
+        S = S.mean(0).reshape(xdim, ydim)
+
+    elif method == 'multivariate':
+        from sklearn import linear_model
+
+        X = np.zeros((n_voxel, xdim * ydim))
+        for i in range(n_voxel):
+            X[i, :] = gaussian_receptive_field(x0[i], y0[i], s0[i]/1.,
+                                               amplitude=1, extent=extent,
+                                               resolution=resolution,
+                                               norm=False).ravel()
+
+        if clf is None:
+            alphas = [0, 10, 20, 30, 50, 100]
+            clf = linear_model.RidgeCV(alphas=alphas, cv=None,
+                                       fit_intercept=True, gcv_mode=None,
+                                       normalize=True, scoring=None,
+                                       store_cv_values=False)
+            # clf = linear_model.Ridge()
+            # clf = linear_model.BayesianRidge(normalize=1)
+
+        clf.fit(X, betas)
+        S = clf.coef_.reshape(xdim, xdim)
+
+    else:
+        raise NotImplementedError('Method not implemented')
+
+    return S
