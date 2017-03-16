@@ -1,7 +1,8 @@
 import numpy as np
 from .due import due, Doi
 
-__all__ = ["gaussian_receptive_field"]
+__all__ = ["select_prf", "gaussian_receptive_field", "stimulus_reconstruction",
+           "example_prf_data"]
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
@@ -55,3 +56,164 @@ def gaussian_receptive_field(x0=0., y0=0., s0=1., amplitude=1.,
         gauss /= gauss.sum()
 
     return gauss
+
+
+def example_prf_data(n_voxel=100, dataset='noise', seed=42):
+    """returns toy example data-set
+
+    Parameters
+    ----------
+    n_voxel : integer
+        Number of voxel included in the example dataset (default=100).
+    dataset : string ['noise']
+        Dataset to load (default='noise').
+
+    Returns
+    -------
+    x0 : array
+         Center of gaussian in visual degrees.
+    y0 : array
+         Center of gaussian in visual degrees.
+    s0 : array
+         Size of gaussian in visual degrees.
+    betas : array
+         Voxel activations.
+
+    Examples
+    --------
+    >>> x0, y0, s0, r2, betas = example_prf_data()
+    >>> plt.scatter(x0, y0, c='r', edgecolor='')
+    """
+    # TODO implement more toy datasets
+    from scipy.spatial.distance import euclidean
+
+    rng = np.random.RandomState(seed)
+
+    if dataset is not 'noise':
+        raise NotImplementedError('Selected dataset is not implemented')
+    else:
+        x0 = rng.normal(size=n_voxel)
+        y0 = rng.normal(size=n_voxel)
+        r2 = np.ones(n_voxel)
+        betas = rng.normal(size=n_voxel, scale=0.2)
+
+        # rf become larger with distance from Fovea
+        s0 = np.zeros(n_voxel)
+        for i in range(n_voxel):
+            s0[i] = euclidean([0, 0], [x0[i], y0[i]])
+
+    return x0, y0, s0, r2, betas
+
+
+def select_prf(data, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
+               verbose=True):
+    """select voxel based on prf-properties
+
+    Parameters
+    ----------
+    data : class
+        pRF data (x0, y0, s0, R2).
+
+    Examples
+    --------
+    >>> x0, y0, s0, r2, betas = example_prf_data()
+    >>> x0, y0, s0, idx = select_prf()
+    """
+
+    n_voxel = data.x0.size
+    xmin, xmax, ymin, ymax = extent
+
+    selection = np.zeros(n_voxel)
+    selection[data.r2 >= r2_thr] += 1
+    selection[data.s0 <= s0_thr] += 1
+    selection[data.y0 >= ymin] += 1
+    selection[data.y0 <= ymax] += 1
+    selection[data.x0 >= xmin] += 1
+    selection[data.x0 <= xmax] += 1
+
+    idx = np.where(selection == 6)[0]
+
+    if verbose:
+        print('Selected voxel: %s' % len(idx))
+
+    x0 = data.x0[idx]
+    y0 = data.y0[idx]
+    s0 = data.s0[idx]
+    return x0, y0, s0, idx
+
+
+def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
+                            extent=[-8, 8, -8, 8], resolution=0.5, clf=None):
+    """prf-based stimulus reconstruction/inverse retinotopy
+
+    Parameters
+    ----------
+    x0 : array
+         Centers of gaussian in visual degrees.
+    y0 : array
+         Centers of gaussian in visual degrees.
+    s0 : array
+         Sizes of gaussian in visual degrees.
+    betas : array
+        Voxel activations.
+    method : string ['summation'|'multi']
+        Reconstruction method to use (default='summation').
+    extent : scalars (left, right, bottom, top), default: [-8, 8, -8, 8]
+         Screen dimensions in visual degrees.
+    resolution : float
+         Interpolation steps in visual degrees (default=0.5).
+
+    Examples
+    --------
+    >>> x0, y0, s0, r2, betas = re.example_prf_data()
+    >>> S = re.stimulus_reconstruction(x0, y0, s0, betas, method='summation')
+    """
+
+    n_voxel = x0.shape[0]
+
+    # TODO make sure x0 shape == y0 == s0
+    assert len(x0) == len(y0)
+
+    xmin, xmax, ymin, ymax = extent
+    xv = np.arange(xmin, xmax, resolution)
+    yv = np.arange(ymin, ymax, resolution)
+    [X, Y] = np.meshgrid(xv, yv)
+    Y = np.flipud(Y)
+
+    xdim = xv.shape[0]
+    ydim = yv.shape[0]
+
+    if method == 'summation':
+        S = np.zeros((n_voxel, xdim, ydim))
+        for i in range(n_voxel):
+            S[i] = gaussian_receptive_field(x0[i], y0[i], s0[i], betas[i],
+                                            extent, resolution)
+
+        S = S.mean(0).reshape(xdim, ydim)
+
+    elif method == 'multivariate':
+        from sklearn import linear_model
+
+        X = np.zeros((n_voxel, xdim * ydim))
+        for i in range(n_voxel):
+            X[i, :] = gaussian_receptive_field(x0[i], y0[i], s0[i]/1.,
+                                               amplitude=1, extent=extent,
+                                               resolution=resolution,
+                                               norm=False).ravel()
+
+        if clf is None:
+            alphas = [0, 10, 20, 30, 50, 100]
+            clf = linear_model.RidgeCV(alphas=alphas, cv=None,
+                                       fit_intercept=True, gcv_mode=None,
+                                       normalize=True, scoring=None,
+                                       store_cv_values=False)
+            # clf = linear_model.Ridge()
+            # clf = linear_model.BayesianRidge(normalize=1)
+
+        clf.fit(X, betas)
+        S = clf.coef_.reshape(xdim, xdim)
+
+    else:
+        raise NotImplementedError('Method not implemented')
+
+    return S
