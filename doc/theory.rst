@@ -1,17 +1,23 @@
 
-This is a theory section
-========================
+Reverse Retinotopy
+===================
 
-I might want to describe some equations: 
+# summation method
+
+#TODO
 
 .. math::
 
     \int_0^\infty e^{-x^2} dx=\frac{\sqrt{\pi}}{2}
 
+Introduced in [Thirion2006]_.
 
-And refer to a paper [author2015]_.
+# multivariate method
 
+#TODO
 
-.. [author2015] first a., second a., cheese b. (2015). The title of their 
-                paper. Journal of papers, *15*: 1023-1049.
+Forward modeling
+================
 
+.. [Thirion2006] Thirion et al. (2006). Inverse retinotopy: Inferring the visual
+                 content of images from brain activation patterns, *15*: 1023-1049.
