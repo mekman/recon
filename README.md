@@ -8,7 +8,7 @@
 **Recon** is an open-source python module for (pRF-based) stimulus reconstruction
 analyses from fMRI data. The main functions include:
 
-- **simple reverse retinotopy** with the``summation`` method (*Thirion et al. 2006; Kok & de Lange (2014); Ekman, Kok & de Lange (2017)*)
+- **simple reverse retinotopy** with the ``summation`` method (*Thirion et al. 2006; Kok & de Lange (2014); Ekman, Kok & de Lange (2017)*)
 - **advanced reverse retinotopy** with the ``multivariate`` method (*Ekman, Roelfsema & de Lange (in prep)*)
 - **spatio-temporal reconstruction** (*Ekman, Kok & de Lange (2017)*)
 - tuning-curve **forward model** (*Brouwer & Heeger (2009)*) - *in future releases*
@@ -40,4 +40,5 @@ You can install the ``recon`` package with:
 If you use the project please cite this article:
 
     Ekman, Kok & de Lange (2017). Time-compressed preplay of anticipated events
-    in human primary visual cortex. Nature Communications.
+    in human primary visual cortex. Nature Communications. 8, 15276 doi:
+    10.1038/ncomms15276

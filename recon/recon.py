@@ -156,12 +156,14 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
          Sizes of gaussian in visual degrees.
     betas : array
         Voxel activations.
-    method : string ['summation'|'multi']
+    method : string ['summation'|'multivariate']
         Reconstruction method to use (default='summation').
     extent : scalars (left, right, bottom, top), default: [-8, 8, -8, 8]
          Screen dimensions in visual degrees.
     resolution : float
          Interpolation steps in visual degrees (default=0.5).
+    clf : class
+        Classifier for ``multivariate`` method (default=None).
 
     Examples
     --------
