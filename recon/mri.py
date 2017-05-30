@@ -41,7 +41,8 @@ def load_mri(func, mask):
     d = nib.load(func).get_data()
 
     # mask the data
-    func_data = d[m != 0] # nib.load(func).get_data()[nib.load(mask).get_data()!=0]
+    func_data = d[m != 0]
+    # nib.load(func).get_data()[nib.load(mask).get_data()!=0]
 
     del d
 
@@ -79,9 +80,9 @@ def save_mri(data, mask, fname=None):
         n_tps = 1
         data = data[:, np.newaxis]
 
-    res = np.zeros((s[0], s[1], s[2], n_tps)) # + time
+    res = np.zeros((s[0], s[1], s[2], n_tps))  # + time
     res[m != 0] = data
 
     # save to disk
-    if not fname is None:
+    if fname is not None:
         nib.save(nib.Nifti1Image(res, aff), fname)
