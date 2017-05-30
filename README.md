@@ -11,7 +11,7 @@ analyses from fMRI data. The main functions include:
 - **simple reverse retinotopy** with the ``summation`` method (*Thirion et al. 2006; Kok & de Lange 2014; Ekman, Kok & de Lange 2017*)
 - **advanced reverse retinotopy** with the ``multivariate`` method (*Ekman, Roelfsema & de Lange (in prep)*)
 - **spatio-temporal reconstruction** (*Ekman, Kok & de Lange 2017*)
-- tuning-curve **forward model** (*Brouwer & Heeger 2009*) - *in future releases*
+- tuning-curve **forward model** (*Brouwer & Heeger 2009*) - *in a future release*
 
 ### Quick-start
 
@@ -30,11 +30,11 @@ $ python
 
 ### Installation
 
-Currently this is only available through GitHub and source installation::
+Currently this is only available through GitHub and source installation
 
     pip install git+https://github.com/mekman/recon.git --upgrade
 
-or::
+or
 
     git clone git@github.com:mekman/recon.git
     cd recon
