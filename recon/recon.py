@@ -105,41 +105,73 @@ def example_prf_data(n_voxel=100, dataset='noise', seed=42):
     return x0, y0, s0, r2, betas
 
 
-def select_prf(data, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
+def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
                verbose=True):
     """select voxel based on prf-properties
 
     Parameters
     ----------
-    data : class
-        pRF data (x0, y0, s0, R2).
+    x0 : array, shape(n_voxel, )
+         Center of gaussian in visual degrees.
+    y0 : array, shape(n_voxel, )
+         Center of gaussian in visual degrees.
+    s0 : array, shape(n_voxel, )
+         Size of gaussian in visual degrees.
+    r2 : array, shape(n_voxel, ) | None
+         Explained variance of pRF-model per voxel (default=None). Optional.
+    r2_thr : int
+         Positive R2 threshold (default=5.). Only voxel >= this value will be
+         selected.
+    s0_thr : int
+         Positive s0 threshold (default=2.5). Only voxel <= this value will be
+         selected.
+    extent : list
+
+    Returns
+    -------
+    x0' : array, shape(n_voxel', )
+         Center of gaussian in visual degrees.
+    y0' : array, shape(n_voxel', )
+         Center of gaussian in visual degrees.
+    s0' : array, shape(n_voxel', )
+         Size of gaussian in visual degrees.
+    r2' : array, shape(n_voxel', )
+         Explained variance of pRF-model per voxel.
+    idx : list
+         Indices of selected voxels.
 
     Examples
     --------
     >>> x0, y0, s0, r2, betas = example_prf_data()
-    >>> x0, y0, s0, idx = select_prf()
+    >>> x0, y0, s0, idx = select_prf(x0, y0, s0, r2)
     """
 
-    n_voxel = data.x0.size
+    n_voxel = x0.size
     xmin, xmax, ymin, ymax = extent
 
+    #TODO assert that x0 shape == y0 shape etc
+    if r2 is None:
+        r2 = np.ones(n_voxel) + r2_thr
+
     selection = np.zeros(n_voxel)
-    selection[data.r2 >= r2_thr] += 1
-    selection[data.s0 <= s0_thr] += 1
-    selection[data.y0 >= ymin] += 1
-    selection[data.y0 <= ymax] += 1
-    selection[data.x0 >= xmin] += 1
-    selection[data.x0 <= xmax] += 1
+    selection[r2 >= r2_thr] += 1
+    selection[s0 <= s0_thr] += 1
+    selection[y0 >= ymin] += 1
+    selection[y0 <= ymax] += 1
+    selection[x0 >= xmin] += 1
+    selection[x0 <= xmax] += 1
 
     idx = np.where(selection == 6)[0]
 
     if verbose:
         print('Selected voxel: %s' % len(idx))
 
-    x0 = data.x0[idx]
-    y0 = data.y0[idx]
-    s0 = data.s0[idx]
-    return x0, y0, s0, idx
+    x0 = x0[idx]
+    y0 = y0[idx]
+    s0 = s0[idx]
+    r2 = r2[idx]
+
+    return x0, y0, s0, r2, idx
 
 
 def stimulus_reconstruction(x0, y0, s0, betas, method='summation',

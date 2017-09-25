@@ -1,2 +1,11 @@
 *.pyc
 *~
+.coverage
+
+# OS generated files #
+######################
+.gdb_history
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
