@@ -105,8 +105,8 @@ def example_prf_data(n_voxel=100, dataset='noise', seed=42):
     return x0, y0, s0, r2, betas
 
 
-def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8],
-               verbose=True):
+def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5,
+               extent=[-8, 8, -8, 8], verbose=True):
     """select voxel based on prf-properties
 
     Parameters
@@ -126,6 +126,9 @@ def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8]
          Positive s0 threshold (default=2.5). Only voxel <= this value will be
          selected.
     extent : list
+        x0/y0 range; x0 (min,max), y0 (min/max). default=[-8, 8, -8, 8].
+    verbose : bool
+        Print information (default=True).
 
     Returns
     -------
@@ -149,7 +152,7 @@ def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5, extent=[-8, 8, -8, 8]
     n_voxel = x0.size
     xmin, xmax, ymin, ymax = extent
 
-    #TODO assert that x0 shape == y0 shape etc
+    # TODO assert that x0 shape == y0 shape etc
     if r2 is None:
         r2 = np.ones(n_voxel) + r2_thr
 
@@ -197,6 +200,11 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
     clf : class
         Classifier for ``multivariate`` method (default=None).
 
+    Returns
+    -------
+    S : array, shape(n_pixel, n_pixel)
+         Reconstructed image. ``n_pixel``depends on ``resolution`` parameter.
+
     Examples
     --------
     >>> x0, y0, s0, r2, betas = re.example_prf_data()
@@ -241,8 +249,6 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
                                        fit_intercept=True, gcv_mode=None,
                                        normalize=True, scoring=None,
                                        store_cv_values=False)
-            # clf = linear_model.Ridge()
-            # clf = linear_model.BayesianRidge(normalize=1)
 
         clf.fit(X, betas)
         S = clf.coef_.reshape(xdim, xdim)
