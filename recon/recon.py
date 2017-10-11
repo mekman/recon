@@ -67,6 +67,8 @@ def example_prf_data(n_voxel=100, dataset='noise', seed=42):
         Number of voxel included in the example dataset (default=100).
     dataset : string ['noise']
         Dataset to load (default='noise').
+    seed : integer
+        Random seed (default=42).
 
     Returns
     -------
@@ -146,7 +148,7 @@ def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5,
     Examples
     --------
     >>> x0, y0, s0, r2, betas = example_prf_data()
-    >>> x0, y0, s0, idx = select_prf(x0, y0, s0, r2)
+    >>> x0, y0, s0, r2, idx = select_prf(x0, y0, s0, r2)
     """
 
     n_voxel = x0.size

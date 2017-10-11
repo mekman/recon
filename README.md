@@ -40,6 +40,8 @@ or
     cd recon
     python setup.py install
 
+You also need to install the [mansfield](https://github.com/mekman/mansfield) module.
+
 ### Citing
 
 If you use the project please cite this article:
