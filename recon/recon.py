@@ -85,7 +85,7 @@ def gaussian_receptive_field_faster(x0=0., y0=0., s0=1., amplitude=1.,
 
     Examples
     --------
-    >>> G = gaussian_receptive_field(x0=1., y0=3., s0=1., amplitude=1.)
+    >>> G = gaussian_receptive_field_faster(x0=1., y0=3., s0=1., amplitude=1.)
     >>> G.shape
     (32, 32)
     """
@@ -221,7 +221,9 @@ def select_prf(x0, y0, s0, r2=None, r2_thr=5., s0_thr=2.5,
     selection[x0 >= xmin] += 1
     selection[x0 <= xmax] += 1
 
-    idx = np.where(selection == 6)[0]
+    # NB, in rare cases s0 can be estimated as nonsensical 0
+    selection[s0 != 0] += 1
+    idx = np.where(selection == 7)[0]
 
     if verbose:
         print('Selected voxel: %s' % len(idx))
