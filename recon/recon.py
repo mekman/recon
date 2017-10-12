@@ -3,7 +3,7 @@ from numba import jit
 from .due import due, Doi
 
 __all__ = ["select_prf", "gaussian_receptive_field", "stimulus_reconstruction",
-           "example_prf_data"]
+           "example_prf_data", "gaussian_receptive_field_faster"]
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
