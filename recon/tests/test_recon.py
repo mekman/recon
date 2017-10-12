@@ -28,7 +28,7 @@ def test_example_prf_data():
 
 def test_select_prf():
     x0, y0, s0, r2, betas = re.example_prf_data(n_voxel=10, dataset='noise')
-    x_, y0, s0, r2, idx = re.select_prf(x0, y0, s0, r2, r2_thr=50., s0_thr=50.,
+    x_, y0, s0, r2, idx = re.select_prf(x0, y0, s0, r2, r2_thr=0., s0_thr=20.,
                                         extent=[-80, 80, -80, 80],
                                         verbose=False)
     npt.assert_equal(x0.shape, x_.shape)
