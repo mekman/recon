@@ -190,7 +190,7 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
     y0 : array
          Centers of gaussian in visual degrees.
     s0 : array
-         Sizes of gaussian in visual degrees.
+         Sizes/sigmas of gaussian in visual degrees.
     betas : array
         Voxel activations.
     method : string ['summation'|'multivariate']
@@ -228,12 +228,12 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
     ydim = yv.shape[0]
 
     if method == 'summation':
-        S = np.zeros((n_voxel, xdim, ydim))
+        S = np.zeros((xdim, ydim))
         for i in range(n_voxel):
-            S[i] = gaussian_receptive_field(x0[i], y0[i], s0[i], betas[i],
-                                            extent, resolution)
+            S += gaussian_receptive_field(x0[i], y0[i], s0[i], betas[i],
+                                          extent, resolution)
 
-        S = S.mean(0).reshape(xdim, ydim)
+        S /= n_voxel
 
     elif method == 'multivariate':
         from sklearn import linear_model
