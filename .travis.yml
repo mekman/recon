@@ -11,7 +11,7 @@ deploy:
 
 env:
   global:
-    - CONDA_DEPS="pip flake8 pytest numpy scipy matplotlib" PIP_DEPS="coveralls pytest-cov"
+    - CONDA_DEPS="pip flake8 pytest numpy scipy matplotlib numba" PIP_DEPS="coveralls pytest-cov"
 
 matrix:
   include:

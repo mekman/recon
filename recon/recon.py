@@ -1,4 +1,5 @@
 import numpy as np
+from numba import jit
 from .due import due, Doi
 
 __all__ = ["select_prf", "gaussian_receptive_field", "stimulus_reconstruction",
@@ -16,7 +17,7 @@ due.cite(Doi("10.1167/13.9.30"),
 
 def gaussian_receptive_field(x0=0., y0=0., s0=1., amplitude=1.,
                              extent=[-8, 8, -8, 8], resolution=0.5,
-                             norm=False):
+                             norm=False, X=None, Y=None):
     """Gaussian 2D receptive field
 
     Parameters
@@ -43,11 +44,12 @@ def gaussian_receptive_field(x0=0., y0=0., s0=1., amplitude=1.,
     (32, 32)
     """
 
-    xmin, xmax, ymin, ymax = extent
-    xv = np.arange(xmin, xmax, resolution)
-    yv = np.arange(ymin, ymax, resolution)
-    [X, Y] = np.meshgrid(xv, yv)
-    Y = np.flipud(Y)
+    if X is None:
+        xmin, xmax, ymin, ymax = extent
+        xv = np.arange(xmin, xmax, resolution)
+        yv = np.arange(ymin, ymax, resolution)
+        [X, Y] = np.meshgrid(xv, yv)
+        Y = np.flipud(Y)
 
     s_factor2 = 2. * s0**2
     gauss = amplitude * np.exp(-((X-x0)**2 + (Y-y0)**2)/s_factor2)
@@ -56,6 +58,59 @@ def gaussian_receptive_field(x0=0., y0=0., s0=1., amplitude=1.,
         gauss /= gauss.sum()
 
     return gauss
+
+
+@jit(nopython=True)
+def gaussian_receptive_field_faster(x0=0., y0=0., s0=1., amplitude=1.,
+                                    extent=np.array([-8., 8., -8., 8.]),
+                                    resolution=0.5):
+    """Gaussian 2D receptive field
+
+    Parameters
+    ----------
+    x0 : float
+         Center of gaussian in visual degrees (default=0).
+    y0 : float
+         Center of gaussian in visual degrees (default=0).
+    s0 : float
+         Size of gaussian in visual degrees (default=1)
+    amplitude : float
+         Amplitude (default=1.)
+    extent : scalars (left, right, bottom, top), default: [-8, 8, -8, 8]
+         Screen dimensions in visual degrees.
+    resolution : float
+         Interpolation steps in visual degrees (default=0.5).
+    norm : bool
+        Normalize gaussian to unit area under the curve (default=False).
+
+    Examples
+    --------
+    >>> G = gaussian_receptive_field(x0=1., y0=3., s0=1., amplitude=1.)
+    >>> G.shape
+    (32, 32)
+    """
+    # Experimental support for Numba, test show speed-up of ~50%
+
+    # meshgrid is not supported yet in numba 0.30.1
+    # xmin, xmax, ymin, ymax = extent
+    # xv = np.arange(xmin, xmax, resolution)
+    # yv = np.arange(ymin, ymax, resolution)
+    # [X, Y] = np.meshgrid(xv, yv)
+    # Y = np.flipud(Y)
+
+    xmin, xmax, ymin, ymax = extent
+    xv = np.arange(xmin, xmax, resolution)
+    yv = np.arange(ymin, ymax, resolution)
+
+    XX, YY = np.atleast_2d(xv, yv)
+    YY = YY.T  # transpose to allow broadcasting
+    ZZ = XX + YY
+
+    X = (ZZ-YY)
+    # Y = np.flip((ZZ-XX),0) # not yet supported in numba 0.30.1
+    Y = (ZZ-XX)[np.arange(YY.shape[0])[::-1], :]
+
+    return amplitude * np.exp(-((X-x0)**2 + (Y-y0)**2)/2. * s0**2)
 
 
 def example_prf_data(n_voxel=100, dataset='noise', seed=42):
@@ -231,7 +286,7 @@ def stimulus_reconstruction(x0, y0, s0, betas, method='summation',
         S = np.zeros((xdim, ydim))
         for i in range(n_voxel):
             S += gaussian_receptive_field(x0[i], y0[i], s0[i], betas[i],
-                                          extent, resolution)
+                                          extent, resolution, X=X, Y=Y)
 
         S /= n_voxel
 
