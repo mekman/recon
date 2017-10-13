@@ -35,14 +35,19 @@ def test_select_prf():
 
 
 def test_stimulus_reconstruction():
-    x0 = np.random.normal(size=100)
-    y0 = np.random.normal(size=100)
-    s0 = np.random.normal(size=100)
+    # TODO: make propper test
+    x0 = np.random.normal(size=10)
+    y0 = np.random.normal(size=10)
+    s0 = np.random.normal(size=10)
 
-    betas = np.ones(100)
+    betas = np.ones(10)
 
     S = re.stimulus_reconstruction(x0, y0, s0, betas, method='summation',
                                    extent=[-8, 8, -8, 8])
 
-    # TODO: make propper test
+    npt.assert_equal(S.shape, (32, 32))
+
+    S = re.stimulus_reconstruction(x0, y0, s0, betas, method='multivariate',
+                                   extent=[-8, 8, -8, 8])
+
     npt.assert_equal(S.shape, (32, 32))
